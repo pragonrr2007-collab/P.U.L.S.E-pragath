@@ -218,3 +218,379 @@ P.U.L.S.E demonstrates how artificial intelligence combined with modern web tech
 
 ---
 
+user manual # ✦ AI Particle Shape Generator — User Manual
+
+---
+
+## 🧭 1. Introduction
+
+The **AI Particle Shape Generator** is a real-time visual simulation tool that lets you create, animate, and control thousands of particles in 3D space using presets, AI generation, and custom JavaScript logic.
+
+This manual explains how to operate every major part of the system.
+
+---
+
+## 🖥️ 2. Interface Overview
+
+The application is divided into key sections:
+
+### 1. Top Controls
+
+* Shape selector (Sphere, Cube, Torus, etc.)
+* Apex Effects dropdown
+* Distribution/Grid selector
+
+### 2. Left Panel
+
+* AI Shape Generator
+* Theme & Color settings
+* Presets
+
+### 3. Center Canvas
+
+* Real-time particle rendering viewport
+* Interactive camera (drag to rotate, scroll to zoom)
+
+### 4. Right Panel
+
+* Particle controls
+* Runtime editor
+* Media inputs
+* Effects & physics
+
+---
+
+## ⚙️ 3. Basic Workflow (Quick Start)
+
+1. Select a **Shape Mode** (e.g., Sphere)
+2. Choose a **Distribution** (e.g., Golden Spiral)
+3. Optionally apply an **Apex Effect**
+4. Adjust particle settings (size, count, etc.)
+5. Click ▶ **Run**
+
+---
+
+## 🧠 4. AI Shape Generator
+
+### Input Field
+
+Type a shape idea:
+
+* `Galaxy`
+* `DNA helix`
+* `Black hole`
+* `Crystal`
+
+### Buttons
+
+* ✦ **Generate** → Creates shape
+* ✕ → Clears input
+
+### Preset Chips
+
+Quick select:
+
+* Galaxy
+* DNA
+* Klein
+* Lorenz
+* Supernova
+
+---
+
+## 🧩 5. Shape Modes
+
+Defines the base geometry:
+
+* **Sphere** → Radial distribution
+* **Cube** → Box-based structure
+* **Torus** → Donut-shaped
+* **Pyramid**
+* **Double Helix**
+* **Möbius Strip**
+* **Custom Code** → Fully programmable
+
+---
+
+## 🌐 6. Distribution Systems
+
+Controls how particles are placed:
+
+* **Lat/Lon Grid** → Earth-like mapping
+* **Golden Spiral** → Natural uniform spacing
+* **Random Shell** → Organic randomness
+* **3D Volume Grid** → Dense cube filling
+* **Flat Plane** → 2D layouts
+* **Custom Logic** → JS-based control
+
+---
+
+## 🌊 7. Apex Effects
+
+Applies dynamic transformations:
+
+* **None** → No distortion
+* **Apex Ripples** → Wave deformation
+* **Apex Vortex** → Swirling motion
+* **Pinch** → Center compression
+
+---
+
+## 🎨 8. Theme & Color System
+
+### Presets
+
+Choose from:
+
+* Cyan Dark
+* Emerald
+* Crimson
+* Ice Blue
+* Rose Neon
+
+### Manual Controls
+
+* Primary Accent
+* Background
+* Text colors
+* Borders & glow
+
+Click **Apply & Close** to save.
+
+---
+
+## ✍️ 9. Drawing Pad
+
+* Draw shapes manually
+* Convert strokes into particles
+* Supports:
+
+  * Brush size
+  * Depth
+  * Rotation
+  * Symmetry
+
+Modes:
+
+* PEN
+* Pulsar (animated strokes)
+
+---
+
+## 🔤 10. Word Input
+
+* Type text to generate particle typography
+* Adjust font size
+* Works best with bold words
+
+---
+
+## 🧬 11. Per-Particle JS Runtime
+
+This is the core engine.
+
+### Execution
+
+Runs **every frame for every particle**
+
+---
+
+### Variables (Read-only)
+
+* `i` → index
+* `count` → total particles
+* `time` → animation time
+* `THREE` → math utilities
+
+---
+
+### Functions (Write-only)
+
+```js
+target.set(x, y, z)
+color.setHSL(h, s, l)
+```
+
+---
+
+### Helpers
+
+```js
+addControl(id, label, min, max, default)
+setInfo(title, description)
+annotate(id, vec3, label)
+```
+
+---
+
+### Example: Sphere
+
+```js
+const r = addControl('r','Radius',50,300,120);
+
+const phi = Math.acos(1 - 2*(i+0.5)/count);
+const theta = i * 2.399 + time;
+
+target.set(
+  Math.sin(phi)*Math.cos(theta)*r,
+  Math.sin(phi)*Math.sin(theta)*r,
+  Math.cos(phi)*r
+);
+
+color.setHSL(i/count,1,0.55);
+```
+
+---
+
+## 🎛️ 12. Particle Controls
+
+* **PTS** → Number of particles
+* **Size** → Particle size
+* **Scale** → Overall shape scaling
+* **Opacity**
+* **Auto-Spin**
+* **Turbulence**
+* **Lerp Speed** → Smoothness of motion
+
+---
+
+## 🌌 13. Effects & Physics
+
+* Pulse Wave
+* Orbit Drift
+* Wave Frequency
+* Tension
+* Force X/Y/Z
+
+Used for motion dynamics.
+
+---
+
+## 📷 14. Media Inputs
+
+### Image
+
+* Upload image
+* Use brightness → depth mapping
+
+### Video
+
+* Converts frames into particle animation
+
+### 3D Model
+
+Supports:
+
+* GLB
+* OBJ
+* PLY
+* PDB
+
+---
+
+## 🧍 15. Face Mesh System
+
+* Click **Start Face Cam**
+* Captures 468 facial points
+* Converts into particle formation
+
+Tip:
+Hold still for 2 seconds to auto-save.
+
+---
+
+## 💾 16. Save & Export
+
+* Save formations using name field
+* Export configurations
+* Reuse saved grids
+
+---
+
+## ▶️ 17. Runtime Controls
+
+* ▶ Run → Start simulation
+* ■ Stop → Pause
+* Clear → Reset runtime code
+
+Status:
+
+* IDLE
+* RUNNING
+
+---
+
+## 🧪 18. Performance Tips
+
+* Keep particles under **10,000**
+* Avoid heavy math inside loops
+* Use `lerpSpeed` for smoother transitions
+* Disable effects if lag occurs
+
+---
+
+## ⚠️ 19. Troubleshooting
+
+### Nothing renders
+
+* Ensure RUN is enabled
+* Check particle count > 0
+
+### Lagging
+
+* Reduce particle count
+* Disable turbulence
+
+### Code not working
+
+* Verify syntax
+* Ensure `target.set()` is used
+
+---
+
+## 🧩 20. Best Practices
+
+* Start simple → then add effects
+* Use AI generator for inspiration
+* Combine:
+
+  * Shape + Distribution + Runtime
+* Save frequently
+
+---
+
+## 📌 21. Keyboard & Interaction
+
+* Drag → Rotate camera
+* Scroll → Zoom
+* Drag mode → Move particles manually
+
+---
+
+## 🔐 22. API Key Usage
+
+* Paste Gemini/Claude API key
+* Stored only in memory
+* Not saved externally
+
+---
+
+## 🧠 23. Concept
+
+> Every particle is independent, programmable, and alive in motion.
+
+---
+
+## 📞 24. Support
+
+For improvements or issues:
+
+* Check runtime errors
+* Reset settings
+* Reapply presets
+
+---
+
+## 📍 End of Manual
+
+---

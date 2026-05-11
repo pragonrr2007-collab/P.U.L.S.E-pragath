@@ -1,1 +1,663 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P.U.L.S.E — Idea Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Permanent+Marker&family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #f5f0e8;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px),
+    radial-gradient(ellipse at 20% 50%, rgba(255,240,200,0.4) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(200,230,255,0.3) 0%, transparent 50%);
+  background-size: 28px 28px, 28px 28px, 100% 100%, 100% 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Whiteboard texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.board {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  padding: 40px;
+  z-index: 1;
+}
+
+/* ── CENTER TITLE ── */
+.center-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
+}
+
+.title-bubble {
+  position: relative;
+  background: white;
+  border: 3px solid #111;
+  border-radius: 18px 12px 20px 8px / 10px 22px 8px 18px;
+  padding: 22px 38px 18px;
+  box-shadow: 4px 5px 0 #111;
+  display: inline-block;
+  transform: rotate(-0.8deg);
+}
+
+/* Torn paper edge effect */
+.title-bubble::before {
+  content: '';
+  position: absolute;
+  top: -12px; left: 10px; right: 15px; height: 14px;
+  background: white;
+  border: 3px solid #111;
+  border-bottom: none;
+  border-radius: 4px 6px 0 0;
+  clip-path: polygon(0 100%, 2% 20%, 5% 80%, 8% 10%, 11% 70%, 14% 5%, 17% 60%, 20% 15%, 23% 75%, 26% 8%, 29% 65%, 32% 20%, 35% 80%, 38% 5%, 41% 70%, 44% 15%, 47% 75%, 50% 0%, 53% 65%, 56% 20%, 59% 80%, 62% 10%, 65% 70%, 68% 5%, 71% 60%, 74% 15%, 77% 75%, 80% 8%, 83% 65%, 86% 20%, 89% 80%, 92% 5%, 95% 70%, 98% 15%, 100% 100%);
+}
+
+.pulse-word {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 3.2rem;
+  color: #e63012;
+  text-shadow: 3px 3px 0 #f5a623, 4px 5px 0 rgba(0,0,0,0.15);
+  letter-spacing: 0.08em;
+  line-height: 1;
+  display: block;
+}
+
+.pulse-sub {
+  font-family: 'Caveat', cursive;
+  font-size: 1.55rem;
+  color: #111;
+  font-weight: 700;
+  display: block;
+  margin-top: 6px;
+  letter-spacing: 0.05em;
+}
+
+.pulse-expand {
+  font-family: 'Kalam', cursive;
+  font-size: 0.68rem;
+  color: #555;
+  display: block;
+  margin-top: 4px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Web connectors */
+.web-line {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 160px;
+  height: 2px;
+  transform-origin: 0 50%;
+  background: repeating-linear-gradient(90deg, #888 0, #888 6px, transparent 6px, transparent 12px);
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── IDEA NODES ── */
+.idea {
+  position: absolute;
+  font-family: 'Caveat', cursive;
+  z-index: 5;
+  cursor: default;
+  transition: transform 0.18s;
+}
+.idea:hover { transform: scale(1.07) rotate(0deg) !important; }
+
+.idea .label {
+  display: inline-block;
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: #111;
+  line-height: 1.25;
+}
+.idea .sub {
+  display: block;
+  font-size: 0.72rem;
+  color: #666;
+  font-family: 'Kalam', cursive;
+  font-weight: 300;
+  margin-top: 1px;
+}
+
+/* colour variants */
+.idea.red .label  { color: #d62828; }
+.idea.blue .label { color: #1655a0; }
+.idea.green .label{ color: #1a7a2e; }
+.idea.orange .label { color: #c45c00; }
+.idea.purple .label { color: #6e28b5; }
+.idea.teal .label  { color: #0a7a6e; }
+
+/* struck-through "rejected" ideas */
+.idea.cross .label {
+  text-decoration: line-through;
+  text-decoration-color: #c00;
+  color: #777;
+}
+
+/* circled ideas */
+.idea.circled .label {
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  padding: 4px 10px;
+}
+
+/* big emphatic */
+.idea.big .label { font-size: 1.5rem; font-weight: 700; }
+.idea.small .label { font-size: 0.82rem; }
+
+/* arrow annotations */
+.arrow-note {
+  position: absolute;
+  font-family: 'Kalam', cursive;
+  font-size: 0.7rem;
+  color: #c00;
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* ── SPIDER WEB doodle ── */
+.doodle-web {
+  position: absolute;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+/* sticky note */
+.sticky {
+  position: absolute;
+  background: #ffec6e;
+  border: 1px solid rgba(0,0,0,0.12);
+  box-shadow: 2px 3px 6px rgba(0,0,0,0.18);
+  padding: 10px 13px 12px;
+  font-family: 'Kalam', cursive;
+  font-size: 0.78rem;
+  color: #222;
+  line-height: 1.5;
+  z-index: 8;
+  max-width: 150px;
+}
+.sticky.blue-sticky { background: #c8e6ff; }
+.sticky.pink-sticky  { background: #ffcce0; }
+.sticky.green-sticky { background: #c8f7c5; }
+
+/* bracket cluster */
+.cluster {
+  position: absolute;
+  border: 2px dashed rgba(0,0,0,0.18);
+  border-radius: 8px;
+  padding: 8px 12px;
+  z-index: 3;
+}
+
+/* ── ENTRY ANIMATIONS ── */
+.idea, .sticky, .cluster {
+  opacity: 0;
+  animation: popIn 0.4s ease forwards;
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; }
+}
+
+/* Stagger */
+.idea:nth-child(1)  { animation-delay: 0.05s }
+.idea:nth-child(2)  { animation-delay: 0.10s }
+.idea:nth-child(3)  { animation-delay: 0.15s }
+.idea:nth-child(4)  { animation-delay: 0.20s }
+.idea:nth-child(5)  { animation-delay: 0.25s }
+.idea:nth-child(6)  { animation-delay: 0.30s }
+.idea:nth-child(7)  { animation-delay: 0.35s }
+.idea:nth-child(8)  { animation-delay: 0.40s }
+.idea:nth-child(9)  { animation-delay: 0.45s }
+.idea:nth-child(10) { animation-delay: 0.50s }
+.idea:nth-child(11) { animation-delay: 0.55s }
+.idea:nth-child(12) { animation-delay: 0.60s }
+.idea:nth-child(13) { animation-delay: 0.65s }
+.idea:nth-child(14) { animation-delay: 0.70s }
+.idea:nth-child(15) { animation-delay: 0.75s }
+.idea:nth-child(16) { animation-delay: 0.80s }
+.idea:nth-child(17) { animation-delay: 0.85s }
+.idea:nth-child(18) { animation-delay: 0.90s }
+.idea:nth-child(19) { animation-delay: 0.95s }
+.idea:nth-child(20) { animation-delay: 1.00s }
+.idea:nth-child(21) { animation-delay: 1.05s }
+.idea:nth-child(22) { animation-delay: 1.10s }
+.idea:nth-child(23) { animation-delay: 1.15s }
+.idea:nth-child(24) { animation-delay: 1.20s }
+.idea:nth-child(25) { animation-delay: 1.25s }
+.sticky, .cluster   { animation-delay: 1.3s }
+
+/* Title pop */
+.center-title {
+  opacity: 0;
+  animation: titlePop 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.02s forwards;
+}
+@keyframes titlePop {
+  from { opacity: 0; transform: translate(-50%,-50%) scale(0.5); }
+  to   { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+}
+
+/* Subtle wobble on hover */
+.idea:hover .label { display: inline-block; animation: wobble 0.3s ease; }
+@keyframes wobble {
+  0%,100% { transform: rotate(0deg); }
+  33% { transform: rotate(-3deg); }
+  66% { transform: rotate(3deg); }
+}
+
+</style>
+</head>
+<body>
+<div class="board" id="board">
+
+  <!-- ═══════════════ CENTER ═══════════════ -->
+  <div class="center-title">
+    <div class="title-bubble">
+      <span class="pulse-word">P.U.L.S.E</span>
+      <span class="pulse-sub">No-Code Particle Engine</span>
+      <span class="pulse-expand">Particle Universe &amp; Live Synthesis Engine</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TOP-LEFT CLUSTER ═══════════════ -->
+
+  <div class="idea red big" style="top:4%;left:3%;transform:rotate(-3deg)">
+    <span class="label">What IS it?</span>
+  </div>
+
+  <div class="idea" style="top:10%;left:2.5%;transform:rotate(1.5deg)">
+    <span class="label">Browser-based</span>
+    <span class="sub">no install, just open</span>
+  </div>
+
+  <div class="idea blue" style="top:16%;left:5%;transform:rotate(-2deg)">
+    <span class="label">3D Particles</span>
+    <span class="sub">thousands, real-time</span>
+  </div>
+
+  <div class="idea" style="top:22%;left:1%;transform:rotate(2deg)">
+    <span class="label">WebGL + Three.js</span>
+    <span class="sub">the rendering muscle</span>
+  </div>
+
+  <div class="idea green" style="top:28%;left:6%;transform:rotate(-1deg)">
+    <span class="label">Gemini API</span>
+    <span class="sub">turns prompt → code</span>
+  </div>
+
+  <!-- ═══════════════ TOP-CENTER ═══════════════ -->
+
+  <div class="idea orange big" style="top:3%;left:33%;transform:rotate(-2.5deg)">
+    <span class="label">Type a word →</span>
+    <span class="sub">particles spell it out</span>
+  </div>
+
+  <div class="idea" style="top:6%;left:52%;transform:rotate(1.2deg)">
+    <span class="label">Draw on pad →</span>
+    <span class="sub">stroke becomes form</span>
+  </div>
+
+  <div class="idea purple" style="top:12%;left:38%;transform:rotate(-1.8deg)">
+    <span class="label">Upload image →</span>
+    <span class="sub">pixels become particles</span>
+  </div>
+
+  <div class="idea" style="top:12%;left:58%;transform:rotate(2deg)">
+    <span class="label">Upload video →</span>
+    <span class="sub">live frame sampling</span>
+  </div>
+
+  <div class="idea cross" style="top:5%;left:22%;transform:rotate(2deg)">
+    <span class="label">Boring 2D</span>
+  </div>
+
+  <!-- ═══════════════ TOP-RIGHT ═══════════════ -->
+
+  <div class="idea red big" style="top:4%;right:5%;transform:rotate(2deg)">
+    <span class="label">Why build it?</span>
+  </div>
+
+  <div class="idea" style="top:10%;right:3%;transform:rotate(-1.5deg)">
+    <span class="label">Coding is hard</span>
+    <span class="sub">math scares people</span>
+  </div>
+
+  <div class="idea orange" style="top:16%;right:6%;transform:rotate(1.8deg)">
+    <span class="label">AI fills the gap</span>
+    <span class="sub">prompt → simulation</span>
+  </div>
+
+  <div class="idea" style="top:22%;right:2%;transform:rotate(-2.2deg)">
+    <span class="label">Rapid prototyping</span>
+    <span class="sub">idea to visual in seconds</span>
+  </div>
+
+  <div class="idea cross" style="top:27%;right:8%;transform:rotate(1.5deg)">
+    <span class="label">Node.js backend</span>
+    <span class="sub">unnecessary weight</span>
+  </div>
+
+  <!-- ═══════════════ LEFT SIDE ═══════════════ -->
+
+  <div class="idea teal big" style="top:38%;left:1%;transform:rotate(-1.5deg)">
+    <span class="label">Input Types</span>
+  </div>
+
+  <div class="idea" style="top:44%;left:2%;transform:rotate(2deg)">
+    <span class="label">Text prompt</span>
+    <span class="sub">"galaxy spiral arms"</span>
+  </div>
+
+  <div class="idea" style="top:50%;left:3%;transform:rotate(-1deg)">
+    <span class="label">Hand drawing</span>
+    <span class="sub">pen, mirror, pulsar</span>
+  </div>
+
+  <div class="idea blue" style="top:56%;left:1%;transform:rotate(2.5deg)">
+    <span class="label">3D Model</span>
+    <span class="sub">GLB / OBJ / PLY / PDB</span>
+  </div>
+
+  <div class="idea" style="top:62%;left:4%;transform:rotate(-2deg)">
+    <span class="label">Face Cam</span>
+    <span class="sub">468 mesh points live</span>
+  </div>
+
+  <div class="idea purple" style="top:68%;left:2%;transform:rotate(1.5deg)">
+    <span class="label">JS Runtime</span>
+    <span class="sub">per-particle code, every frame</span>
+  </div>
+
+  <div class="idea" style="top:74%;left:5%;transform:rotate(-1deg)">
+    <span class="label">Gesture Camera</span>
+    <span class="sub">open hand / swirl / pinch</span>
+  </div>
+
+  <!-- ═══════════════ RIGHT SIDE ═══════════════ -->
+
+  <div class="idea orange big" style="top:36%;right:1%;transform:rotate(1.5deg)">
+    <span class="label">Shapes</span>
+  </div>
+
+  <div class="idea" style="top:42%;right:2%;transform:rotate(-1.8deg)">
+    <span class="label">Sphere</span>
+  </div>
+
+  <div class="idea" style="top:47%;right:4%;transform:rotate(2.5deg)">
+    <span class="label">Torus / Möbius</span>
+  </div>
+
+  <div class="idea" style="top:52%;right:1%;transform:rotate(-2deg)">
+    <span class="label">Double Helix</span>
+    <span class="sub">DNA vibes</span>
+  </div>
+
+  <div class="idea green" style="top:57%;right:5%;transform:rotate(1.2deg)">
+    <span class="label">Chennai Map 🗺</span>
+    <span class="sub">38 real zone anchors</span>
+  </div>
+
+  <div class="idea" style="top:63%;right:2%;transform:rotate(-1.5deg)">
+    <span class="label">Custom Code</span>
+    <span class="sub">tx, ty, tz = anything</span>
+  </div>
+
+  <div class="idea purple" style="top:69%;right:3%;transform:rotate(2deg)">
+    <span class="label">AI-generated</span>
+    <span class="sub">Klein, Lorenz, Nautilus…</span>
+  </div>
+
+  <!-- ═══════════════ BOTTOM-LEFT ═══════════════ -->
+
+  <div class="idea red big" style="bottom:18%;left:2%;transform:rotate(-2deg)">
+    <span class="label">Controls</span>
+  </div>
+
+  <div class="idea" style="bottom:12%;left:3%;transform:rotate(2deg)">
+    <span class="label">Particle count</span>
+    <span class="sub">500 → 300,000</span>
+  </div>
+
+  <div class="idea blue" style="bottom:7%;left:1%;transform:rotate(-1.5deg)">
+    <span class="label">Turbulence</span>
+    <span class="sub">controlled chaos</span>
+  </div>
+
+  <div class="idea" style="bottom:2%;left:8%;transform:rotate(1.8deg)">
+    <span class="label">Lerp Speed</span>
+    <span class="sub">how fast shapes morph</span>
+  </div>
+
+  <div class="idea orange" style="bottom:12%;left:18%;transform:rotate(-2.5deg)">
+    <span class="label">Pulse Wave</span>
+    <span class="sub">heartbeat animation</span>
+  </div>
+
+  <div class="idea" style="bottom:5%;left:22%;transform:rotate(2.2deg)">
+    <span class="label">Orbit Drift</span>
+    <span class="sub">particles in lazy orbit</span>
+  </div>
+
+  <!-- ═══════════════ BOTTOM-CENTER ═══════════════ -->
+
+  <div class="idea teal big" style="bottom:22%;left:37%;transform:rotate(1.5deg)">
+    <span class="label">Visual Styles</span>
+  </div>
+
+  <div class="idea" style="bottom:15%;left:35%;transform:rotate(-2deg)">
+    <span class="label">Spark</span>
+  </div>
+
+  <div class="idea" style="bottom:15%;left:43%;transform:rotate(1.5deg)">
+    <span class="label">Plasma</span>
+  </div>
+
+  <div class="idea" style="bottom:15%;left:51%;transform:rotate(-1.2deg)">
+    <span class="label">Cyber</span>
+  </div>
+
+  <div class="idea purple" style="bottom:10%;left:38%;transform:rotate(2.5deg)">
+    <span class="label">Neon Additive Glow</span>
+    <span class="sub">everything burns blue</span>
+  </div>
+
+  <div class="idea" style="bottom:4%;left:42%;transform:rotate(-2deg)">
+    <span class="label">Color Palettes</span>
+    <span class="sub">Bio Lum · Solar · Crimson…</span>
+  </div>
+
+  <!-- ═══════════════ BOTTOM-RIGHT ═══════════════ -->
+
+  <div class="idea green big" style="bottom:20%;right:3%;transform:rotate(2deg)">
+    <span class="label">Future Ideas</span>
+  </div>
+
+  <div class="idea" style="bottom:14%;right:4%;transform:rotate(-2.5deg)">
+    <span class="label">Voice input</span>
+    <span class="sub">"make it explode!"</span>
+  </div>
+
+  <div class="idea blue" style="bottom:8%;right:2%;transform:rotate(1.8deg)">
+    <span class="label">VR / AR</span>
+    <span class="sub">particles in your room</span>
+  </div>
+
+  <div class="idea" style="bottom:3%;right:8%;transform:rotate(-1.5deg)">
+    <span class="label">Offline AI</span>
+    <span class="sub">runs without internet</span>
+  </div>
+
+  <div class="idea cross" style="bottom:14%;right:18%;transform:rotate(2deg)">
+    <span class="label">Server-side rendering</span>
+    <span class="sub">too slow</span>
+  </div>
+
+  <!-- ═══════════════ SCATTERED MISC ═══════════════ -->
+
+  <div class="idea small" style="top:34%;left:16%;transform:rotate(-3deg)">
+    <span class="label">Formation Save/Load</span>
+    <span class="sub">snapshots of configurations</span>
+  </div>
+
+  <div class="idea small orange" style="top:38%;right:18%;transform:rotate(3deg)">
+    <span class="label">Screenshot Export</span>
+    <span class="sub">capture the art</span>
+  </div>
+
+  <div class="idea small" style="bottom:35%;left:18%;transform:rotate(2.5deg)">
+    <span class="label">Layout Customizer</span>
+    <span class="sub">drag-reorder widgets</span>
+  </div>
+
+  <div class="idea small green" style="bottom:38%;right:16%;transform:rotate(-2deg)">
+    <span class="label">8 Color Themes</span>
+    <span class="sub">full CSS token swap</span>
+  </div>
+
+  <div class="idea small" style="top:44%;left:19%;transform:rotate(-1.5deg)">
+    <span class="label">Particle drag-to-move</span>
+    <span class="sub">anchor individual ones</span>
+  </div>
+
+  <div class="idea small purple" style="top:48%;right:19%;transform:rotate(2deg)">
+    <span class="label">addControl() helper</span>
+    <span class="sub">live sliders from code</span>
+  </div>
+
+  <div class="idea small red" style="bottom:46%;left:20%;transform:rotate(1.2deg)">
+    <span class="label">Offline PWA</span>
+    <span class="sub">service worker cached</span>
+  </div>
+
+  <div class="idea small" style="bottom:43%;right:20%;transform:rotate(-2.5deg)">
+    <span class="label">Symmetry drawing</span>
+    <span class="sub">mirror mode + pulsar</span>
+  </div>
+
+  <!-- ═══════════════ STICKY NOTES ═══════════════ -->
+
+  <div class="sticky" style="top:32%;left:24%;transform:rotate(-4deg)">
+    <strong>Core Idea:</strong><br>
+    Prompts → Particles<br>
+    No maths needed
+  </div>
+
+  <div class="sticky blue-sticky" style="top:30%;right:22%;transform:rotate(3deg)">
+    Creator:<br>
+    <strong>Pragath</strong><br>
+    1st Year student
+  </div>
+
+  <div class="sticky pink-sticky" style="bottom:30%;left:28%;transform:rotate(2deg)">
+    Every particle is<br>
+    <strong>independent &amp;</strong><br>
+    <strong>alive in motion</strong>
+  </div>
+
+  <div class="sticky green-sticky" style="bottom:28%;right:25%;transform:rotate(-3deg)">
+    Used by:<br>
+    Artists · Students<br>
+    Devs · Educators
+  </div>
+
+  <!-- ═══════════════ LITTLE ARROW NOTES ═══════════════ -->
+
+  <div class="arrow-note" style="top:14%;left:28%;transform:rotate(-5deg)">
+    ← AI writes the JS
+  </div>
+
+  <div class="arrow-note" style="top:18%;right:27%;transform:rotate(4deg)">
+    runs in browser! →
+  </div>
+
+  <div class="arrow-note" style="bottom:24%;left:36%;transform:rotate(3deg)">
+    ↓ all live, no reload
+  </div>
+
+  <div class="arrow-note" style="top:58%;left:24%;transform:rotate(-3deg);color:#1655a0">
+    face mesh → 4K mode ↗
+  </div>
+
+  <!-- ═══════════════ SVG WEB DOODLES ═══════════════ -->
+
+  <svg class="doodle-web" style="top:2%;right:28%;width:80px;height:80px" viewBox="0 0 80 80">
+    <line x1="40" y1="0"  x2="40" y2="80" stroke="#555" stroke-width="1"/>
+    <line x1="0"  y1="40" x2="80" y2="40" stroke="#555" stroke-width="1"/>
+    <line x1="5"  y1="5"  x2="75" y2="75" stroke="#555" stroke-width="1"/>
+    <line x1="75" y1="5"  x2="5"  y2="75" stroke="#555" stroke-width="1"/>
+    <ellipse cx="40" cy="40" rx="15" ry="15" stroke="#555" stroke-width="1" fill="none"/>
+    <ellipse cx="40" cy="40" rx="30" ry="30" stroke="#555" stroke-width="1" fill="none"/>
+  </svg>
+
+  <svg class="doodle-web" style="bottom:5%;left:56%;width:60px;height:60px" viewBox="0 0 60 60">
+    <line x1="30" y1="0"  x2="30" y2="60" stroke="#555" stroke-width="1"/>
+    <line x1="0"  y1="30" x2="60" y2="30" stroke="#555" stroke-width="1"/>
+    <line x1="4"  y1="4"  x2="56" y2="56" stroke="#555" stroke-width="1"/>
+    <line x1="56" y1="4"  x2="4"  y2="56" stroke="#555" stroke-width="1"/>
+    <ellipse cx="30" cy="30" rx="12" ry="12" stroke="#555" stroke-width="1" fill="none"/>
+    <ellipse cx="30" cy="30" rx="24" ry="24" stroke="#555" stroke-width="1" fill="none"/>
+  </svg>
+
+  <!-- ── Corner particle doodle (simple dots) ── -->
+  <svg style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.12" viewBox="0 0 1200 800" preserveAspectRatio="none">
+    <!-- scattered particle dots -->
+    <circle cx="80" cy="400" r="3" fill="#1655a0"/>
+    <circle cx="90" cy="380" r="2" fill="#1655a0"/>
+    <circle cx="70" cy="420" r="2.5" fill="#1655a0"/>
+    <circle cx="110" cy="390" r="1.5" fill="#1655a0"/>
+    <circle cx="60" cy="410" r="2" fill="#1655a0"/>
+
+    <circle cx="1120" cy="400" r="3" fill="#d62828"/>
+    <circle cx="1140" cy="380" r="2" fill="#d62828"/>
+    <circle cx="1110" cy="420" r="2.5" fill="#d62828"/>
+    <circle cx="1100" cy="390" r="1.5" fill="#d62828"/>
+
+    <!-- Central area orbit dots suggestion -->
+    <circle cx="600" cy="200" r="2" fill="#888"/>
+    <circle cx="620" cy="195" r="1.5" fill="#888"/>
+    <circle cx="580" cy="205" r="1.5" fill="#888"/>
+    <circle cx="600" cy="600" r="2" fill="#888"/>
+    <circle cx="640" cy="590" r="1.5" fill="#888"/>
+    <circle cx="560" cy="610" r="1.5" fill="#888"/>
+  </svg>
+
+</div>
+
+<script>
+// Preserve each element's rotation on hover
+document.querySelectorAll('.idea').forEach(el => {
+  const m = el.style.transform.match(/rotate\(([^)]+)\)/);
+  const rot = m ? m[1] : '0deg';
+  el.addEventListener('mouseenter', () => {
+    el.style.transform = `scale(1.1) rotate(${rot})`;
+  });
+  el.addEventListener('mouseleave', () => {
+    el.style.transform = `scale(1) rotate(${rot})`;
+  });
+});
+</script>
+</body>
+</html>
